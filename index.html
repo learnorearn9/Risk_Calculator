@@ -254,55 +254,59 @@
             <p>Made for education &amp; quick sizing. No personal data is collected. Not financial advice.</p>
         </footer>
     </main>
-
-     <script>
-  // Formatters
+<script>
   const RsFmt = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const PxFmt = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 8 });
 
   function val(id){ return parseFloat(document.getElementById(id).value); }
-  function clearBuy(){ ['buyEntry','buySL','buyRisk'].forEach(i=>document.getElementById(i).value=''); }
-  function clearSell(){ ['sellEntry','sellSL','sellRisk'].forEach(i=>document.getElementById(i).value=''); }
+  function clearBuy(){ ['buyEntry','buySL','buyTarget','buyRisk'].forEach(i=>document.getElementById(i).value=''); }
+  function clearSell(){ ['sellEntry','sellSL','sellTarget','sellRisk'].forEach(i=>document.getElementById(i).value=''); }
 
   function buyCalc(){
-    const ep = val('buyEntry'), sl = val('buySL'), risk = val('buyRisk');
+    const ep = val('buyEntry'), sl = val('buySL'), tp = val('buyTarget'), risk = val('buyRisk');
     const out = document.getElementById('buyOut');
-    if([ep,sl,risk].some(n=>Number.isNaN(n))){
-      out.innerHTML = '<span class="err">Please enter valid numbers for Entry, Stop Loss and Risk.</span>'; return;
+    if([ep,sl,tp,risk].some(n=>Number.isNaN(n))){
+      out.innerHTML = '<span class="err">Please enter valid numbers.</span>'; return;
     }
     const riskPerUnit = ep - sl;
     if(riskPerUnit <= 0){
-      out.innerHTML = '<span class="err">Entry Price must be greater than Stop Loss for a Buy setup.</span>'; return;
+      out.innerHTML = '<span class="err">Entry must be greater than Stop Loss for Buy.</span>'; return;
     }
     const qty = risk / riskPerUnit;
-    const target = ep + riskPerUnit;
 
     out.innerHTML =
-      `✅ Buy <b>${qty.toFixed(4)}</b> units at <b>${PxFmt.format(ep)}</b>.<br/>`+
-      `🎯 Target: <b>${PxFmt.format(target)}</b><br/>`+
-      `🛑 Stop Loss: <b>${PxFmt.format(sl)}</b><br/>`+
-      `⚖️ Risk per trade: <b>₹ ${RsFmt.format(risk)}</b>`;
+      `<pre>
+Entry Price       : ${PxFmt.format(ep)} ✅
+Stop Loss Price   : ${PxFmt.format(sl)} 🛑
+Target Price      : ${PxFmt.format(tp)} 🎯
+
+Quantity          : ${qty.toFixed(4)} ⚖️
+Risk (₹)          : ${RsFmt.format(risk)} 💰
+</pre>`;
     clearBuy();
   }
 
   function sellCalc(){
-    const ep = val('sellEntry'), sl = val('sellSL'), risk = val('sellRisk');
+    const ep = val('sellEntry'), sl = val('sellSL'), tp = val('sellTarget'), risk = val('sellRisk');
     const out = document.getElementById('sellOut');
-    if([ep,sl,risk].some(n=>Number.isNaN(n))){
-      out.innerHTML = '<span class="err">Please enter valid numbers for Entry, Stop Loss and Risk.</span>'; return;
+    if([ep,sl,tp,risk].some(n=>Number.isNaN(n))){
+      out.innerHTML = '<span class="err">Please enter valid numbers.</span>'; return;
     }
-    const riskPerUnit = sl - ep; // SL above entry
+    const riskPerUnit = sl - ep;
     if(riskPerUnit <= 0){
-      out.innerHTML = '<span class="err">Stop Loss must be greater than Entry Price for a Sell setup.</span>'; return;
+      out.innerHTML = '<span class="err">Stop Loss must be greater than Entry for Sell.</span>'; return;
     }
     const qty = risk / riskPerUnit;
-    const target = ep - riskPerUnit;
 
     out.innerHTML =
-      `✅ Sell <b>${qty.toFixed(4)}</b> units at <b>${PxFmt.format(ep)}</b>.<br/>`+
-      `🎯 Target: <b>${PxFmt.format(target)}</b><br/>`+
-      `🛑 Stop Loss: <b>${PxFmt.format(sl)}</b><br/>`+
-      `⚖️ Risk per trade: <b>₹ ${RsFmt.format(risk)}</b>`;
+      `<pre>
+Entry Price       : ${PxFmt.format(ep)} ✅
+Stop Loss Price   : ${PxFmt.format(sl)} 🛑
+Target Price      : ${PxFmt.format(tp)} 🎯
+
+Quantity          : ${qty.toFixed(4)} ⚖️
+Risk (₹)          : ${RsFmt.format(risk)} 💰
+</pre>`;
     clearSell();
   }
 
@@ -312,7 +316,10 @@
   document.getElementById('sellClear').addEventListener('click', ()=>{ document.getElementById('sellOut').innerHTML=''; clearSell(); });
 </script>
 
+ 
+
 
 </body>
 </html>
+
 
